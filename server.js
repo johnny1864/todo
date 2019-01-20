@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const path = require("path");
+const ObjectID = require("mongodb").ObjectID;
 
 const Task = require("./models/task");
 
@@ -57,14 +58,14 @@ app.put('/:id', (req, res) => {
     const todoID = req.params.id;
     const userInput = req.body;
 
-    console.log('put pinged', todoID);
+    console.log('put pinged', todoID, ObjectID(todoID));
     db.collection(collection)
-        .findOneAndUpdate({ _id: todoID }, { $set: { todo: userInput.todo } }, { returnOriginal: false }, (err, result) => {
+        .findOneAndUpdate({ _id: ObjectID(todoID) }, { $set: { todo: userInput.task } }, { returnOriginal: false }, (err, result) => {
             if (err) {
                 console.log(err);
             }
             else {
-                //console.log(result)
+                console.log(result);
                 res.json(result);
             }
         });
