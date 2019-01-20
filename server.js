@@ -1,7 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
-
+const path = require("path");
 
 const Task = require("./models/task");
 
@@ -18,9 +18,16 @@ const collection = 'tasks';
 
 const app = express();
 
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-// GET ALL TASKS
+// SEND USER TO INDEX PAGE
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, './index.html'));
+});
+
+
+// GET ALL TASKS FROM DB
 app.get('/tasks', (req, res) => {
     console.log('pinged tasks');
     Task.find(function(err, data) {
@@ -31,7 +38,7 @@ app.get('/tasks', (req, res) => {
     })
 });
 
-// POST A TASKS
+// POST A TASKS INTO DB
 app.post('/tasks', (req, res) => {
     const taskEntered = req.body;
     const task = new Task(taskEntered);
@@ -43,6 +50,24 @@ app.post('/tasks', (req, res) => {
 
         res.json({ message: 'Task created!' });
     });
+});
+
+// UPDATE A TASKS 
+app.put('/:id', (req, res) => {
+    const todoID = req.params.id;
+    const userInput = req.body;
+
+    console.log('put pinged', todoID);
+    db.collection(collection)
+        .findOneAndUpdate({ _id: todoID }, { $set: { todo: userInput.todo } }, { returnOriginal: false }, (err, result) => {
+            if (err) {
+                console.log(err);
+            }
+            else {
+                //console.log(result)
+                res.json(result);
+            }
+        });
 });
 
 
