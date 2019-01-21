@@ -60,7 +60,7 @@ app.put('/:id', (req, res) => {
 
     console.log('put pinged', todoID, ObjectID(todoID));
     db.collection(collection)
-        .findOneAndUpdate({ _id: ObjectID(todoID) }, { $set: { todo: userInput.task } }, { returnOriginal: false }, (err, result) => {
+        .findOneAndUpdate({ _id: ObjectID(todoID) }, { $set: { task: userInput.task } }, { returnOriginal: false }, (err, result) => {
             if (err) {
                 console.log(err);
             }
