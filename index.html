@@ -101,7 +101,13 @@
                         body: JSON.stringify({task: taskInput.val()}) 
                     })
                     .then(res => res.json())
-                    .then(data => console.log(data));
+                    .then(data => {
+                        if(data.ok === 1){
+                            let todoIndex = $(`#${todoID}`);
+                            todoIndex.html(data.value.task);
+                            resetForm();
+                        }
+                    });
                 });
             };
             
