@@ -29,8 +29,7 @@ app.get('/', (req, res) => {
 
 
 // GET ALL TASKS FROM DB
-app.get('/tasks', (req, res) => {
-    console.log('pinged tasks');
+app.get('/getTasks', (req, res) => {
     Task.find(function(err, data) {
         if (err) {
             res.send(data);
@@ -44,12 +43,14 @@ app.post('/tasks', (req, res) => {
     const taskEntered = req.body;
     const task = new Task(taskEntered);
 
-    task.save((err) => {
+    console.log(task, taskEntered);
+    db.collection(collection).insertOne(task, (err, result) => {
         if (err) {
-            res.send(err);
+            console.log(err);
         }
-
-        res.json({ message: 'Task created!' });
+        else {
+            res.json({ result, document: result.ops[0] });
+        }
     });
 });
 

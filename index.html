@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>Bootstrap 101 Template</title>
+    <title>Todo App</title>
 
     <!-- Bootstrap -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" rel="stylesheet">
@@ -38,7 +38,7 @@
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="js/bootstrap.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.bundle.min.js"></script>
     
     <script>
         $(document).ready(_ =>{
@@ -46,6 +46,45 @@
             const form = $('#form');
             const taskInput = $('#taskInput');
             
+            // GET TODOS FROM DATABASE 
+            const getTodos = () =>{
+                fetch('/getTasks', {method: 'get'}).then(res => {
+                    return res.json();
+                }).then(data =>{
+                    displayTodos(data);
+                });
+            };
+            
+            getTodos();
+            
+            // POST TO DATABASE
+            form.submit( (e) => {
+                e.preventDefault();
+                console.log('submited');
+                fetch('/tasks', {
+                    method: 'post', 
+                    body: JSON.stringify({
+                        task: taskInput.val(),
+                        isDone: false
+                    }),
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                })
+                .then(res => {
+                    console.log(res);
+                    return res.json();
+                })
+                .then(data => {
+                    console.log(data);
+                    // if(data.message === 'Task created!'){
+                    //     let ids = buildIDs(data)
+                    // }
+                })
+                .catch(err => console.log(err));
+            });
+            
+            // CLEAR FORM
             const resetForm = () => {
                 form.val('');
             };
@@ -62,7 +101,7 @@
             const buildTemplate = (todo, ids) => {
                 return `<li class="list-group-item" id='${ids.itemID}'>
                     <div class='row'>
-                        <div class="col-md-4" id='${ids.todoID}'>${todo.todo}</div>
+                        <div class="col-md-4" id='${ids.todoID}'>${todo.task}</div>
                         <div class="col-md-4"></div>
                         <div class="col-md-4 text-right">
                             <button class='btn btn-secondary' id='${ids.editID}'>Edit</button>
@@ -70,7 +109,7 @@
                         </div>
                     </div>
                 </li>`;
-            }
+            };
             
             const displayTodos = (data) => {
                 data.forEach(todo => {
@@ -80,7 +119,7 @@
                     editTodo(todo, ids.todoID, ids.editID);
                     deleteTodo(todo, ids.todoID, ids.editID);
                 });
-            }
+            };
             
             const editTodo = (todo, todoID, editID) => {
                 
