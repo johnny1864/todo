@@ -43,7 +43,6 @@ app.post('/tasks', (req, res) => {
     const taskEntered = req.body;
     const task = new Task(taskEntered);
 
-    console.log(task, taskEntered);
     db.collection(collection).insertOne(task, (err, result) => {
         if (err) {
             console.log(err);
@@ -59,9 +58,24 @@ app.put('/:id', (req, res) => {
     const todoID = req.params.id;
     const userInput = req.body;
 
-    console.log('put pinged', todoID, ObjectID(todoID));
     db.collection(collection)
         .findOneAndUpdate({ _id: ObjectID(todoID) }, { $set: { task: userInput.task } }, { returnOriginal: false }, (err, result) => {
+            if (err) {
+                console.log(err);
+            }
+            else {
+                console.log(result);
+                res.json(result);
+            }
+        });
+});
+
+// DELETE A TASKS 
+app.delete('/:id', (req, res) => {
+    const todoID = req.params.id;
+
+    db.collection(collection)
+        .findOneAndDelete({ _id: ObjectID(todoID) }, (err, result) => {
             if (err) {
                 console.log(err);
             }
